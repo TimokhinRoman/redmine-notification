@@ -1,19 +1,12 @@
 package ru.arriah.redminenotification.util;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
-@Component
-@Scope("prototype")
-public class RedmineUrlBuilder {
+public class RedmineUrlBuilder implements UrlBuilder {
 
    private final UriComponentsBuilder builder;
 
-   @Autowired
-   public RedmineUrlBuilder(@Value("${redmine.url}") String url) {
+   public RedmineUrlBuilder(String url) {
       System.out.println("RedmineUrlBuilder constructed");
       builder = UriComponentsBuilder.fromHttpUrl(url);
    }

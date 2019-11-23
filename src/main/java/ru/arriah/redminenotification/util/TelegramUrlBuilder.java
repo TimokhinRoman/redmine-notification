@@ -1,19 +1,14 @@
 package ru.arriah.redminenotification.util;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Objects;
 
-@Component
-@Scope("prototype")
-public class TelegramUrlBuilder {
+public class TelegramUrlBuilder implements UrlBuilder {
 
    private final UriComponentsBuilder builder;
 
-   public TelegramUrlBuilder(@Value("${telegram.url}") String url, @Value("${telegram.token}") String token) {
+   public TelegramUrlBuilder(String url, String token) {
       Objects.requireNonNull(token);
       builder = UriComponentsBuilder.fromHttpUrl(url)
             .path("/bot" + token);
