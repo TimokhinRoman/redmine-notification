@@ -1,13 +1,14 @@
 package ru.arriah.redminenotification.telegram.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
-public class Request {
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+public abstract class Request {
 
    @JsonProperty("chat_id")
-   protected String chatId;
+   protected final String chatId;
 }

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import ru.arriah.redminenotification.redmine.Issue;
 import ru.arriah.redminenotification.service.RedmineService;
 
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Scanner;
 
 @SpringBootApplication
+@EnableScheduling
 public class RedmineNotificationApplication implements CommandLineRunner {
 
    @Autowired

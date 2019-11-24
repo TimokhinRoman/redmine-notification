@@ -1,12 +1,10 @@
 package ru.arriah.redminenotification.telegram;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.util.StringUtils;
 
-@Getter
-@Setter
+@Data
 public class Update {
 
    @JsonProperty("update_id")

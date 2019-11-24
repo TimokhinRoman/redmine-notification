@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Response {
+public abstract class Response {
 
    @JsonProperty("ok")
    protected boolean ok;
