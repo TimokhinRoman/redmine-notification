@@ -1,4 +1,4 @@
-package ru.arriah.redminenotification.redmine;
+package ru.arriah.redminenotification.redmine.entity;
 
 import lombok.Getter;
 import lombok.Setter;

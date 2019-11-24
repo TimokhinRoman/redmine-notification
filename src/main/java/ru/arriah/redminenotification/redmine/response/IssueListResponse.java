@@ -1,14 +1,15 @@
-package ru.arriah.redminenotification.redmine;
+package ru.arriah.redminenotification.redmine.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import ru.arriah.redminenotification.redmine.entity.Issue;
 
 import java.util.List;
 
 @Getter
 @Setter
-public class IssueList {
+public class IssueListResponse {
 
    @JsonProperty("issues")
    private List<Issue> issues;

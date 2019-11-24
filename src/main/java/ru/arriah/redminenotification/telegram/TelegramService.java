@@ -1,15 +1,14 @@
-package ru.arriah.redminenotification.service;
+package ru.arriah.redminenotification.telegram;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import ru.arriah.redminenotification.telegram.Message;
-import ru.arriah.redminenotification.telegram.Update;
+import ru.arriah.redminenotification.telegram.entity.Message;
+import ru.arriah.redminenotification.telegram.entity.Update;
 import ru.arriah.redminenotification.telegram.request.MessageRequest;
 import ru.arriah.redminenotification.telegram.response.MessageResponse;
 import ru.arriah.redminenotification.telegram.response.UpdateResponse;
 import ru.arriah.redminenotification.util.RequestBuilderExecutor;
-import ru.arriah.redminenotification.util.TelegramUrlBuilder;
 
 import java.util.List;
 

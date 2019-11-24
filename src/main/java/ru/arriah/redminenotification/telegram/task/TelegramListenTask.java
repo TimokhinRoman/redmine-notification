@@ -1,14 +1,14 @@
-package ru.arriah.redminenotification.task;
+package ru.arriah.redminenotification.telegram.task;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import ru.arriah.redminenotification.redmine.Issue;
-import ru.arriah.redminenotification.service.RedmineService;
-import ru.arriah.redminenotification.service.TelegramService;
-import ru.arriah.redminenotification.telegram.Update;
+import ru.arriah.redminenotification.redmine.entity.Issue;
+import ru.arriah.redminenotification.redmine.RedmineService;
+import ru.arriah.redminenotification.telegram.TelegramService;
+import ru.arriah.redminenotification.telegram.entity.Update;
 import ru.arriah.redminenotification.telegram.request.MessageRequest;
 
 import java.util.HashSet;
@@ -44,24 +44,36 @@ public class TelegramListenTask {
    }
 
    private void processUpdate(Update update) {
-      if (processedUpdates.contains(update.getId())) return;
+      if (isUpdateAlreadyProcessed(update)) return;
 
       log.info("Processing: " + update);
 
       if (update.hasMessage()) {
-         switch (update.getMessage().getText()) {
-            case "/issues":
-               processIssuesCommand();
-               break;
-            default:
-               log.info("Unknown command");
-               break;
-         }
+         processCommand(update.getMessage().getText());
       } else {
          log.info("Update has no message, ignore");
       }
 
+      markUpdateAsProcessed(update);
+   }
+
+   private boolean isUpdateAlreadyProcessed(Update update) {
+      return processedUpdates.contains(update.getId());
+   }
+
+   private void markUpdateAsProcessed(Update update) {
       processedUpdates.add(update.getId());
+   }
+
+   private void processCommand(String command) {
+      switch (command) {
+         case "/issues":
+            processIssuesCommand();
+            break;
+         default:
+            log.info("Unknown command");
+            break;
+      }
    }
 
    private void processIssuesCommand() {

@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 import ru.arriah.redminenotification.logging.RequestLoggingInterceptor;
+import ru.arriah.redminenotification.redmine.RedmineUrlBuilder;
+import ru.arriah.redminenotification.telegram.TelegramUrlBuilder;
 import ru.arriah.redminenotification.util.*;
 
 @Configuration

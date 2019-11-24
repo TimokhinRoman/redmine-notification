@@ -5,10 +5,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import ru.arriah.redminenotification.redmine.Issue;
-import ru.arriah.redminenotification.service.RedmineService;
-import ru.arriah.redminenotification.service.TelegramService;
-import ru.arriah.redminenotification.telegram.Message;
+import ru.arriah.redminenotification.redmine.entity.Issue;
+import ru.arriah.redminenotification.redmine.RedmineService;
+import ru.arriah.redminenotification.telegram.TelegramService;
+import ru.arriah.redminenotification.telegram.entity.Message;
 import ru.arriah.redminenotification.telegram.request.MessageRequest;
 
 import java.util.List;

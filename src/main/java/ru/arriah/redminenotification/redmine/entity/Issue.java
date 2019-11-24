@@ -1,4 +1,4 @@
-package ru.arriah.redminenotification.redmine;
+package ru.arriah.redminenotification.redmine.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;

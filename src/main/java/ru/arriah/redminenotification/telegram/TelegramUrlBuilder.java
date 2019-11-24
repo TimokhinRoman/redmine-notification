@@ -1,6 +1,7 @@
-package ru.arriah.redminenotification.util;
+package ru.arriah.redminenotification.telegram;
 
 import org.springframework.web.util.UriComponentsBuilder;
+import ru.arriah.redminenotification.util.UrlBuilder;
 
 import java.util.Objects;
 

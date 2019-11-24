@@ -1,6 +1,7 @@
-package ru.arriah.redminenotification.util;
+package ru.arriah.redminenotification.redmine;
 
 import org.springframework.web.util.UriComponentsBuilder;
+import ru.arriah.redminenotification.util.UrlBuilder;
 
 public class RedmineUrlBuilder implements UrlBuilder {
 
