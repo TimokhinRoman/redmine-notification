@@ -2,33 +2,26 @@ package ru.arriah.redminenotification.telegram.task;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import ru.arriah.redminenotification.redmine.entity.Issue;
-import ru.arriah.redminenotification.redmine.RedmineService;
 import ru.arriah.redminenotification.telegram.TelegramService;
 import ru.arriah.redminenotification.telegram.entity.Update;
-import ru.arriah.redminenotification.telegram.request.MessageRequest;
+import ru.arriah.redminenotification.util.CommandProcessor;
 
 import java.util.HashSet;
-import java.util.List;
 
 @Slf4j
 @Component
 public class TelegramListenTask {
 
    private final TelegramService telegram;
-   private final RedmineService redmine;
-   private final String chatId;
-
+   private final CommandProcessor processor;
    private final HashSet<Integer> processedUpdates;
 
    @Autowired
-   public TelegramListenTask(TelegramService telegram, RedmineService redmine, @Value("${telegram.chatId}") String chatId) {
+   public TelegramListenTask(TelegramService telegram, CommandProcessor processor) {
       this.telegram = telegram;
-      this.redmine = redmine;
-      this.chatId = chatId;
+      this.processor = processor;
       this.processedUpdates = new HashSet<>();
    }
 
@@ -49,7 +42,7 @@ public class TelegramListenTask {
       log.info("Processing: " + update);
 
       if (update.hasMessage()) {
-         processCommand(update.getMessage().getText());
+         processor.process(update.getMessage().getText());
       } else {
          log.info("Update has no message, ignore");
       }
@@ -63,24 +56,5 @@ public class TelegramListenTask {
 
    private void markUpdateAsProcessed(Update update) {
       processedUpdates.add(update.getId());
-   }
-
-   private void processCommand(String command) {
-      switch (command) {
-         case "/issues":
-            processIssuesCommand();
-            break;
-         default:
-            log.info("Unknown command");
-            break;
-      }
-   }
-
-   private void processIssuesCommand() {
-      List<Issue> issues = redmine.getIssuesAssignedToMe();
-      for (Issue issue : issues) {
-         telegram.sendMessage(MessageRequest.builder().chatId(chatId).text(issue.toString()).build());
-      }
-
    }
 }

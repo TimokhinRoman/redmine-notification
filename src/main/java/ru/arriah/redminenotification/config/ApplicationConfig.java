@@ -1,5 +1,6 @@
 package ru.arriah.redminenotification.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +10,8 @@ import ru.arriah.redminenotification.logging.RequestLoggingInterceptor;
 import ru.arriah.redminenotification.redmine.RedmineUrlBuilder;
 import ru.arriah.redminenotification.telegram.TelegramUrlBuilder;
 import ru.arriah.redminenotification.util.*;
+
+import java.util.List;
 
 @Configuration
 public class ApplicationConfig {
@@ -48,5 +51,11 @@ public class ApplicationConfig {
                                                                                     UrlBuilderFactory<TelegramUrlBuilder> urlBuilderFactory,
                                                                                     HttpEntityFactory httpEntityFactory) {
       return new RequestBuilderExecutor<>(restTemplate, urlBuilderFactory, httpEntityFactory);
+   }
+
+   @Bean()
+   @Autowired(required = false)
+   public CommandProcessor commandProcessor(List<CommandExecutor> executors) {
+      return new CommandProcessor(executors);
    }
 }
