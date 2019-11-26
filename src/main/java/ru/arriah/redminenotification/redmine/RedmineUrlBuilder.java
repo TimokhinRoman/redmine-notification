@@ -8,7 +8,6 @@ public class RedmineUrlBuilder implements UrlBuilder {
    private final UriComponentsBuilder builder;
 
    public RedmineUrlBuilder(String url) {
-      System.out.println("RedmineUrlBuilder constructed");
       builder = UriComponentsBuilder.fromHttpUrl(url);
    }
 

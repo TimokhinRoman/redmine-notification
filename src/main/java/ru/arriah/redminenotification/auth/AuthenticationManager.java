@@ -1,5 +1,6 @@
 package ru.arriah.redminenotification.auth;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -9,17 +10,21 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class AuthenticationManager {
 
+   private final ApplicationEventPublisher publisher;
    private final Map<String, UserToken> userMap;
    private final ThreadLocal<UserToken> currentUser;
 
-   public AuthenticationManager() {
-      userMap = new ConcurrentHashMap<>();
-      currentUser = new ThreadLocal<>();
+   public AuthenticationManager(ApplicationEventPublisher publisher) {
+      this.publisher = publisher;
+      this.userMap = new ConcurrentHashMap<>();
+      this.currentUser = new ThreadLocal<>();
    }
 
    public UserToken authenticate(UserToken user) {
       if (!isValid(user)) throw new AuthenticationException(user);
-      return userMap.put(user.getChatId(), user);
+      user = userMap.put(user.getChatId(), user);
+      publisher.publishEvent(new AuthenticationEvent(this, user));
+      return user;
    }
 
    public boolean isAuthenticated(UserToken user) {
