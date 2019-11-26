@@ -6,7 +6,9 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
+import ru.arriah.redminenotification.auth.AuthenticationManager;
 import ru.arriah.redminenotification.logging.RequestLoggingInterceptor;
+import ru.arriah.redminenotification.redmine.RedmineHttpEntityFactory;
 import ru.arriah.redminenotification.redmine.RedmineUrlBuilder;
 import ru.arriah.redminenotification.telegram.TelegramUrlBuilder;
 import ru.arriah.redminenotification.util.*;
@@ -35,27 +37,20 @@ public class ApplicationConfig {
    }
 
    @Bean
-   public HttpEntityFactory httpEntityFactory(@Value("${redmine.apiKey}") String apiKey) {
-      return new HttpEntityFactory(apiKey);
-   }
-
-   @Bean
    public RequestBuilderExecutor<RedmineUrlBuilder> redmineRequestBuilderExecutor(RestTemplate restTemplate,
                                                                                   UrlBuilderFactory<RedmineUrlBuilder> urlBuilderFactory,
-                                                                                  HttpEntityFactory httpEntityFactory) {
+                                                                                  RedmineHttpEntityFactory httpEntityFactory) {
       return new RequestBuilderExecutor<>(restTemplate, urlBuilderFactory, httpEntityFactory);
    }
 
    @Bean
    public RequestBuilderExecutor<TelegramUrlBuilder> telegramRequestBuilderExecutor(RestTemplate restTemplate,
-                                                                                    UrlBuilderFactory<TelegramUrlBuilder> urlBuilderFactory,
-                                                                                    HttpEntityFactory httpEntityFactory) {
-      return new RequestBuilderExecutor<>(restTemplate, urlBuilderFactory, httpEntityFactory);
+                                                                                    UrlBuilderFactory<TelegramUrlBuilder> urlBuilderFactory) {
+      return new RequestBuilderExecutor<>(restTemplate, urlBuilderFactory, null);
    }
 
    @Bean()
-   @Autowired(required = false)
-   public CommandProcessor commandProcessor(List<CommandExecutor> executors) {
-      return new CommandProcessor(executors);
+   public CommandProcessor commandProcessor(@Autowired(required = false) List<CommandExecutor> executors, AuthenticationManager authManager) {
+      return new SecureCommandProcessor(executors, authManager);
    }
 }

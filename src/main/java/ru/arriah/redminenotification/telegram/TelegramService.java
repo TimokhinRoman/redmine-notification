@@ -32,6 +32,10 @@ public class TelegramService {
             .getUpdates();
    }
 
+   public Message sendMessage(String chatId, String message) {
+      return sendMessage(MessageRequest.builder().chatId(chatId).text(message).build());
+   }
+
    public Message sendMessage(MessageRequest request) {
       return executor.<MessageResponse>builder()
             .forUrl(TelegramUrlBuilder::sendMessage)

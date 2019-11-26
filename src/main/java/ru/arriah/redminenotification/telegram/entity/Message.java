@@ -10,6 +10,8 @@ public class Message {
    private int id;
    @JsonProperty("text")
    private String text;
+   @JsonProperty("from")
+   private User user;
    @JsonProperty("chat")
    private Chat chat;
 }

@@ -22,7 +22,7 @@ public class CommandProcessor {
       }
    }
 
-   public void process(String command) {
+   public void process(String command, String... params) {
       CommandExecutor executor = executors.get(command);
 
       if (executor == null) {
@@ -30,6 +30,10 @@ public class CommandProcessor {
          return;
       }
 
-      executor.execute();
+      executor.execute(params);
+   }
+
+   protected CommandExecutor getExecutor(String command) {
+      return executors.get(command);
    }
 }

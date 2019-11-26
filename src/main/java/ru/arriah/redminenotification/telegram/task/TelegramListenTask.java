@@ -4,10 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import ru.arriah.redminenotification.auth.AuthenticationManager;
+import ru.arriah.redminenotification.auth.NotAuthenticatedException;
 import ru.arriah.redminenotification.telegram.TelegramService;
 import ru.arriah.redminenotification.telegram.entity.Update;
 import ru.arriah.redminenotification.util.CommandProcessor;
 
+import java.util.Arrays;
 import java.util.HashSet;
 
 @Slf4j
@@ -16,12 +19,14 @@ public class TelegramListenTask {
 
    private final TelegramService telegram;
    private final CommandProcessor processor;
+   private final AuthenticationManager authManager;
    private final HashSet<Integer> processedUpdates;
 
    @Autowired
-   public TelegramListenTask(TelegramService telegram, CommandProcessor processor) {
+   public TelegramListenTask(TelegramService telegram, CommandProcessor processor, AuthenticationManager authManager) {
       this.telegram = telegram;
       this.processor = processor;
+      this.authManager = authManager;
       this.processedUpdates = new HashSet<>();
    }
 
@@ -41,10 +46,15 @@ public class TelegramListenTask {
 
       log.info("Processing: " + update);
 
-      if (update.hasMessage()) {
-         processor.process(update.getMessage().getText());
-      } else {
-         log.info("Update has no message, ignore");
+      try {
+         if (update.hasMessage()) {
+            authManager.setCurrentUser(update.getMessage().getUser().getId());
+            processMessage(update.getMessage().getText());
+         } else {
+            log.info("Update has no message, ignore");
+         }
+      } catch (Exception e) {
+         log.error("Failed to process an update", e);
       }
 
       markUpdateAsProcessed(update);
@@ -52,6 +62,20 @@ public class TelegramListenTask {
 
    private boolean isUpdateAlreadyProcessed(Update update) {
       return processedUpdates.contains(update.getId());
+   }
+
+   private void processMessage(String message) {
+      try {
+         String[] strings = message.split(" ");
+         String command = strings[0];
+         String[] params = Arrays.copyOfRange(strings, 1, strings.length);
+         processor.process(command, params);
+      } catch (NotAuthenticatedException e) {
+         telegram.sendMessage(authManager.getCurrentUser().getChatId(), "API key есть? А если найду?");
+      } catch (Exception e) {
+         telegram.sendMessage(authManager.getCurrentUser().getChatId(), "Возникла непредвиденная ошибка.");
+         throw e;
+      }
    }
 
    private void markUpdateAsProcessed(Update update) {
