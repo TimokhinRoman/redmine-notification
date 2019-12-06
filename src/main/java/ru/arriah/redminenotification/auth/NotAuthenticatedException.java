@@ -4,6 +4,10 @@ public class NotAuthenticatedException extends RuntimeException {
 
    private final UserToken userToken;
 
+   public NotAuthenticatedException() {
+      this(null);
+   }
+
    public NotAuthenticatedException(UserToken userToken) {
       this.userToken = userToken;
    }
