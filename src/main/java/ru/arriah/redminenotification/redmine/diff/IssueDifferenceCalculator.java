@@ -2,14 +2,14 @@ package ru.arriah.redminenotification.redmine.diff;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.Nullable;
 import ru.arriah.redminenotification.redmine.entity.Issue;
 import ru.arriah.redminenotification.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
+
+import static java.util.Objects.isNull;
 
 public class IssueDifferenceCalculator {
 
@@ -26,16 +26,26 @@ public class IssueDifferenceCalculator {
       collectToPairMap(newIssues, map, IssuePair::setNewIssue);
 
       List<IssueDifference> result = new ArrayList<>();
-      for (Issue newIssue : newIssues) {
 
+      for (IssuePair pair : map.values()) {
+         IssueDifference diff = diff(pair.getOldIssue(), pair.getNewIssue());
+         if (diff != null) {
+            result.add(diff);
+         }
       }
 
       return result;
    }
 
-   public static IssueDifference diff(Issue oldIssue, Issue newIssue) {
+   @Nullable
+   private static IssueDifference diff(Issue oldIssue, Issue newIssue) {
+      boolean diff = false;
 
-      return new IssueDifference();
+      if (isNull(oldIssue) != isNull(newIssue)) {
+         diff = true;
+      }
+
+      return diff ? new IssueDifference(oldIssue, newIssue) : null;
    }
 
    private static void collectToPairMap(List<Issue> issues, Map<Integer, IssuePair> map, BiConsumer<IssuePair, Issue> setter) {
