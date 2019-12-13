@@ -37,13 +37,16 @@ public class RedmineTaskFactory {
       }
 
       @Override
-      public int getDelay() {
+      public long getDelay() {
          return task.getDelay();
       }
 
       @Override
       public void run() {
          authManager.setCurrentUser(userToken);
+         if (task instanceof AbstractRedmineTask) {
+            ((AbstractRedmineTask) task).setUser(userToken);
+         }
          task.run();
          authManager.setCurrentUser((UserToken) null);
       }

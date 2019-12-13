@@ -22,6 +22,10 @@ public class RedmineTaskIssuesHolder {
       return getIssuesForUser(userToken.getApiKey()).getOrDefault(taskType, Collections.emptyList());
    }
 
+   public <T extends AbstractRedmineTask> void putIssues(UserToken userToken, Class<T> taskType, List<Issue> issues) {
+      getIssuesForUser(userToken.getApiKey()).put(taskType, issues);
+   }
+
    private Map<Class, List<Issue>> getIssuesForUser(String key) {
       return issues.computeIfAbsent(key, k -> new ConcurrentHashMap<>());
    }

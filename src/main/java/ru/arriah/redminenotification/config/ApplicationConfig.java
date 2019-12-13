@@ -10,6 +10,8 @@ import ru.arriah.redminenotification.auth.AuthenticationManager;
 import ru.arriah.redminenotification.logging.RequestLoggingInterceptor;
 import ru.arriah.redminenotification.redmine.RedmineHttpEntityFactory;
 import ru.arriah.redminenotification.redmine.RedmineUrlBuilder;
+import ru.arriah.redminenotification.telegram.TelegramService;
+import ru.arriah.redminenotification.telegram.TelegramServiceImpl;
 import ru.arriah.redminenotification.telegram.TelegramUrlBuilder;
 import ru.arriah.redminenotification.util.*;
 
@@ -52,5 +54,15 @@ public class ApplicationConfig {
    @Bean()
    public CommandProcessor commandProcessor(@Autowired(required = false) List<CommandExecutor> executors, AuthenticationManager authManager) {
       return new SecureCommandProcessor(executors, authManager);
+   }
+
+   @Bean
+   public TelegramService telegram(RequestBuilderExecutor<TelegramUrlBuilder> executor) {
+      return new TelegramServiceImpl(executor);
+   }
+
+   @Bean
+   public MessageFormatter messageFormatter() {
+      return new HtmlMessageFormatter();
    }
 }

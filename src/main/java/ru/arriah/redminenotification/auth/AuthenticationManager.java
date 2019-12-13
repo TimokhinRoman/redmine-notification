@@ -22,7 +22,7 @@ public class AuthenticationManager {
 
    public UserToken authenticate(UserToken user) {
       if (!isValid(user)) throw new AuthenticationException(user);
-      user = userMap.put(user.getChatId(), user);
+      userMap.put(user.getChatId(), user);
       publisher.publishEvent(new AuthenticationEvent(this, user));
       return user;
    }
