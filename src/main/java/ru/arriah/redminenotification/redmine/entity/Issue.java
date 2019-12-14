@@ -5,13 +5,12 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
+import ru.arriah.redminenotification.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -42,10 +41,7 @@ public class Issue extends Entity {
 
    @JsonProperty("custom_fields")
    public void setCustomFieldList(List<CustomField> customFields) {
-      if (customFields != null) {
-         this.customFields = customFields.stream()
-               .collect(Collectors.toMap(CustomField::getId, Function.identity()));
-      }
+      this.customFields = CollectionUtils.toMap(customFields, CustomField::getId);
    }
 
    @NotNull

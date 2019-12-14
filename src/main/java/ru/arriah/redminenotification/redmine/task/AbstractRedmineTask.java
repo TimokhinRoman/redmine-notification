@@ -25,7 +25,7 @@ abstract class AbstractRedmineTask implements Schedulable {
       this.telegram = telegram;
    }
 
-   void setUser(UserToken user) {
+   final void setUser(UserToken user) {
       this.user = user;
    }
 
@@ -33,9 +33,8 @@ abstract class AbstractRedmineTask implements Schedulable {
    public void run() {
       if (user == null) throw new NotAuthenticatedException();
 
-      List<Issue> oldIssues = issuesHolder.getIssues(user, getClass());
       List<Issue> newIssues = getIssues();
-      issuesHolder.putIssues(user, getClass(), newIssues);
+      List<Issue> oldIssues = issuesHolder.putIssues(user, getClass(), newIssues);
       List<IssueDifference> diffs = IssueDifferenceCalculator.diff(oldIssues, newIssues);
       if (!diffs.isEmpty()) {
          for (IssueDifference diff : diffs) {

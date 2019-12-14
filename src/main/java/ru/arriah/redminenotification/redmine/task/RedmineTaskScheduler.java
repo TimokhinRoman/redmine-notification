@@ -1,15 +1,14 @@
 package ru.arriah.redminenotification.redmine.task;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
 import ru.arriah.redminenotification.auth.AuthenticationEvent;
 import ru.arriah.redminenotification.auth.UserToken;
-import ru.arriah.redminenotification.util.CollectionUtils;
+import ru.arriah.redminenotification.util.Table;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ScheduledFuture;
 
 @Component
@@ -18,16 +17,16 @@ public class RedmineTaskScheduler implements ApplicationListener<AuthenticationE
 
    private final TaskScheduler taskScheduler;
    private final RedmineTaskFactory taskFactory;
-   private final Map<String, ScheduledTaskContainer> userTasks;
+   private final Table<String, Class<? extends Schedulable>, ScheduledFuture> userTasks;
 
    public RedmineTaskScheduler(TaskScheduler taskScheduler, RedmineTaskFactory taskFactory) {
       this.taskScheduler = taskScheduler;
       this.taskFactory = taskFactory;
-      this.userTasks = new HashMap<>();
+      this.userTasks = new Table<>();
    }
 
    @Override
-   public void onApplicationEvent(AuthenticationEvent authenticationEvent) {
+   public void onApplicationEvent(@NotNull AuthenticationEvent authenticationEvent) {
       UserToken userToken = authenticationEvent.getUserToken();
       String apiKey = userToken.getApiKey();
       if (userTasks.containsKey(apiKey)) return;
@@ -45,19 +44,13 @@ public class RedmineTaskScheduler implements ApplicationListener<AuthenticationE
       String key = userToken.getApiKey();
       if (!userTasks.containsKey(key)) return;
 
-      ScheduledTaskContainer container = userTasks.get(key);
-      ScheduledFuture future = container.get(taskType);
+      ScheduledFuture future = userTasks.get(key, taskType);
       if (future != null) {
          future.cancel(false);
       }
    }
 
    private <T extends Schedulable> void storeTask(T task, ScheduledFuture future, String key) {
-      ScheduledTaskContainer container = getOrCreateNewContainer(key);
-      container.put(task.getClass(), future);
-   }
-
-   private ScheduledTaskContainer getOrCreateNewContainer(String key) {
-      return CollectionUtils.computeIfAbsent(userTasks, key, ScheduledTaskContainer::new);
+      userTasks.put(key, task.getClass(), future);
    }
 }

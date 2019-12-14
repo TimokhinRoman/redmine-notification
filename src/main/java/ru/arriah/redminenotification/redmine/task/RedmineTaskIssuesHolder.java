@@ -1,8 +1,11 @@
 package ru.arriah.redminenotification.redmine.task;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
 import ru.arriah.redminenotification.auth.UserToken;
 import ru.arriah.redminenotification.redmine.entity.Issue;
+import ru.arriah.redminenotification.util.Table;
 
 import java.util.Collections;
 import java.util.List;
@@ -12,21 +15,19 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class RedmineTaskIssuesHolder {
 
-   private final Map<String, Map<Class, List<Issue>>> issues;
+   private final Table<String, Class<? extends AbstractRedmineTask>, List<Issue>> issues;
 
    public RedmineTaskIssuesHolder() {
-      issues = new ConcurrentHashMap<>();
+      issues = new Table<>(ConcurrentHashMap::new, ConcurrentHashMap::new);
    }
 
+   @NotNull
    public <T extends AbstractRedmineTask> List<Issue> getIssues(UserToken userToken, Class<T> taskType) {
-      return getIssuesForUser(userToken.getApiKey()).getOrDefault(taskType, Collections.emptyList());
+      return issues.getOrDefault(userToken.getApiKey(), taskType, Collections.emptyList());
    }
 
-   public <T extends AbstractRedmineTask> void putIssues(UserToken userToken, Class<T> taskType, List<Issue> issues) {
-      getIssuesForUser(userToken.getApiKey()).put(taskType, issues);
-   }
-
-   private Map<Class, List<Issue>> getIssuesForUser(String key) {
-      return issues.computeIfAbsent(key, k -> new ConcurrentHashMap<>());
+   @Nullable
+   public <T extends AbstractRedmineTask> List<Issue> putIssues(UserToken userToken, Class<T> taskType, List<Issue> issues) {
+      return this.issues.put(userToken.getApiKey(), taskType, issues);
    }
 }
